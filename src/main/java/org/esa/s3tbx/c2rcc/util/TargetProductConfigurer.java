@@ -124,6 +124,7 @@ public class TargetProductConfigurer {
     public TargetProductConfigurer(String sensor, Product sourceProduct) {
         this.sensor = sensor;
         this.sourceProduct = sourceProduct;
+
     }
 
     public void configure(Product targetProduct) {
