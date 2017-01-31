@@ -161,8 +161,8 @@ public class C2rccLandsat8Operator extends PixelOperator implements C2rccConfigu
             "rtosa_rpath"
     };
 
-    private static final String STANDARD_NETS = "STANDARD_NETS";
-    private static final String EXTREME_NETS = "EXTREME_NETS";
+    private static final String STANDARD_NETS = "C2RCC-Nets";
+    private static final String EXTREME_NETS = "C2X-Nets";
     private static final Map<String, String[]> c2rccNetSetMap = new HashMap<>();
 
     static {
