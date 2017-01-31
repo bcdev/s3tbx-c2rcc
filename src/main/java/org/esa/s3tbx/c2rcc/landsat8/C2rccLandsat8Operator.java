@@ -5,6 +5,7 @@ import org.esa.s3tbx.c2rcc.C2rccCommons;
 import org.esa.s3tbx.c2rcc.C2rccConfigurable;
 import org.esa.s3tbx.c2rcc.ancillary.AtmosphericAuxdata;
 import org.esa.s3tbx.c2rcc.ancillary.AtmosphericAuxdataBuilder;
+import org.esa.s3tbx.c2rcc.meris.C2rccMerisAlgorithm;
 import org.esa.s3tbx.c2rcc.util.NNUtils;
 import org.esa.snap.core.datamodel.Band;
 import org.esa.snap.core.datamodel.FlagCoding;
@@ -44,6 +45,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.esa.s3tbx.c2rcc.C2rccCommons.addBand;
 import static org.esa.s3tbx.c2rcc.C2rccCommons.addVirtualBand;
@@ -159,19 +161,37 @@ public class C2rccLandsat8Operator extends PixelOperator implements C2rccConfigu
             "rtosa_rpath"
     };
 
-    private static final String[] c2rccNNResourcePaths = new String[10];
+    private static final String STANDARD_NETS = "STANDARD_NETS";
+    private static final String EXTREME_NETS = "EXTREME_NETS";
+    private static final Map<String, String[]> c2rccNetSetMap = new HashMap<>();
 
     static {
-        c2rccNNResourcePaths[IDX_iop_rw] = "landsat8/landsat8_netze_20160818/iop_rw/17x97x47_79.9.net";
-        c2rccNNResourcePaths[IDX_iop_unciop] = "landsat8/landsat8_netze_20160818/iop_unciop/17x77x37_11486.7.net";
-        c2rccNNResourcePaths[IDX_iop_uncsumiop_unckd] = "landsat8/landsat8_netze_20160818/iop_uncsumiop_unckd/17x77x37_9113.1.net";
-        c2rccNNResourcePaths[IDX_rtosa_aann] = "landsat8/landsat8_netze_20160818/rtosa_aann/29x7x29_56.3.net";
-        c2rccNNResourcePaths[IDX_rtosa_rpath] = "landsat8/landsat8_netze_20160818/rtosa_rpath/31x77x57x37_2336.9.net";
-        c2rccNNResourcePaths[IDX_rtosa_rw] = "landsat8/landsat8_netze_20160818/rtosa_rw/31x71x51x31_229436.1.net";
-        c2rccNNResourcePaths[IDX_rtosa_trans] = "landsat8/landsat8_netze_20160818/rtosa_trans/29x75x55x35_28119.6.net";
-        c2rccNNResourcePaths[IDX_rw_iop] = "landsat8/landsat8_netze_20160818/rw_iop/47x97x17_15723.1.net";
-        c2rccNNResourcePaths[IDX_rw_kd] = "landsat8/landsat8_netze_20160818/rw_kd/97x77x7_268.5.net";
-        c2rccNNResourcePaths[IDX_rw_rwnorm] = "landsat8/landsat8_netze_20160818/rw_rwnorm/27x7x27_9.7.net";
+        String[] standardNets = new String[10];
+        standardNets[IDX_iop_rw] = "landsat8/landsat8_netze_20160818/iop_rw/17x97x47_79.9.net";
+        standardNets[IDX_iop_unciop] = "landsat8/landsat8_netze_20160818/iop_unciop/17x77x37_11486.7.net";
+        standardNets[IDX_iop_uncsumiop_unckd] = "landsat8/landsat8_netze_20160818/iop_uncsumiop_unckd/17x77x37_9113.1.net";
+        standardNets[IDX_rtosa_aann] = "landsat8/landsat8_netze_20160818/rtosa_aann/29x7x29_56.3.net";
+        standardNets[IDX_rtosa_rpath] = "landsat8/landsat8_netze_20160818/rtosa_rpath/31x77x57x37_2336.9.net";
+        standardNets[IDX_rtosa_rw] = "landsat8/landsat8_netze_20160818/rtosa_rw/31x71x51x31_229436.1.net";
+        standardNets[IDX_rtosa_trans] = "landsat8/landsat8_netze_20160818/rtosa_trans/29x75x55x35_28119.6.net";
+        standardNets[IDX_rw_iop] = "landsat8/landsat8_netze_20160818/rw_iop/47x97x17_15723.1.net";
+        standardNets[IDX_rw_kd] = "landsat8/landsat8_netze_20160818/rw_kd/97x77x7_268.5.net";
+        standardNets[IDX_rw_rwnorm] = "landsat8/landsat8_netze_20160818/rw_rwnorm/27x7x27_9.7.net";
+        c2rccNetSetMap.put(STANDARD_NETS, standardNets);
+    }
+    static {
+        String[] extremeNets = new String[10];
+        extremeNets[IDX_iop_rw] = "landsat8/landsat8_hitsm_20161115/iop_rw/17x97x47_106.0.net";
+        extremeNets[IDX_iop_unciop] = "landsat8/landsat8_hitsm_20161115/iop_unciop/17x77x37_11486.7.net";
+        extremeNets[IDX_iop_uncsumiop_unckd] = "landsat8/landsat8_hitsm_20161115/iop_uncsumiop_unckd/17x77x37_9113.1.net";
+        extremeNets[IDX_rtosa_aann] = "landsat8/landsat8_hitsm_20161115/rtosa_aann/29x7x29_46.7.net";
+        extremeNets[IDX_rtosa_rpath] = "landsat8/landsat8_hitsm_20161115/rtosa_rpath/31x37_3296.0.net";
+        extremeNets[IDX_rtosa_rw] = "landsat8/landsat8_hitsm_20161115/rtosa_rw/31x77x57x37_160378.5.net";
+        extremeNets[IDX_rtosa_trans] = "landsat8/landsat8_hitsm_20161115/rtosa_trans/29x75x55x35_27514.5.net";
+        extremeNets[IDX_rw_iop] = "landsat8/landsat8_hitsm_20161115/rw_iop/47x97x17_10481.8.net";
+        extremeNets[IDX_rw_kd] = "landsat8/landsat8_hitsm_20161115/rw_kd/97x77x7_681.2.net";
+        extremeNets[IDX_rw_rwnorm] = "landsat8/landsat8_hitsm_20161115/rw_rwnorm/27x7x27_9.7.net";
+        c2rccNetSetMap.put(EXTREME_NETS, extremeNets);
     }
 
     @SourceProduct(label = "Landsat 8 product",
@@ -268,6 +288,12 @@ public class C2rccLandsat8Operator extends PixelOperator implements C2rccConfigu
             "set of neuronal nets with the ones in the given directory.",
             label = "Alternative NN Path")
     private String alternativeNNPath;
+
+    @Parameter(valueSet = {STANDARD_NETS, EXTREME_NETS},
+            description = "Set of neuronal nets for algorithm.",
+            defaultValue = STANDARD_NETS,
+            label = "Set of neuronal nets")
+    private String netSet = STANDARD_NETS;
 
     @Parameter(defaultValue = "false", description =
             "Reflectance values in the target product shall be either written as remote sensing or water leaving reflectances",
@@ -1003,14 +1029,16 @@ public class C2rccLandsat8Operator extends PixelOperator implements C2rccConfigu
         }
 
         try {
-            final String[] nnFilePaths;
-            final boolean loadFromResources = StringUtils.isNullOrEmpty(alternativeNNPath);
-            if (loadFromResources) {
-                nnFilePaths = c2rccNNResourcePaths;
+            if (StringUtils.isNotNullAndNotEmpty(alternativeNNPath)) {
+                String[] nnFilePaths = NNUtils.getNNFilePaths(Paths.get(alternativeNNPath), alternativeNetDirNames);
+                algorithm = new C2rccLandsat8Algorithm(nnFilePaths, false);
             } else {
-                nnFilePaths = NNUtils.getNNFilePaths(Paths.get(alternativeNNPath), alternativeNetDirNames);
+                String[] nnFilePaths = c2rccNetSetMap.get(netSet);
+                if(nnFilePaths == null) {
+                    throw new OperatorException(String.format("Unknown set '%s' of neural nets specified.", netSet));
+                }
+                algorithm = new C2rccLandsat8Algorithm(nnFilePaths, true);
             }
-            algorithm = new C2rccLandsat8Algorithm(nnFilePaths, loadFromResources);
         } catch (IOException e) {
             throw new OperatorException(e);
         }

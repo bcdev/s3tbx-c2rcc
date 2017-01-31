@@ -578,8 +578,6 @@ class C2rccLandsat8Algorithm {
 
     private ThreadLocal<NNffbpAlphaTabFast> nnhs(String sourcePath, boolean loadFromResource) throws IOException {
 
-//        Files.
-
         final InputStream stream;
         if (loadFromResource) {
             String name = "/auxdata/nets/" + sourcePath;
