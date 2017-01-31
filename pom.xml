@@ -128,7 +128,7 @@
                     <cluster>s3tbx</cluster>
                     <brandingToken>s3tbx</brandingToken>
                     <requiresRestart>true</requiresRestart>
-                    <keystore>${project.basedir}/../keystore/s3tbx.ks</keystore>
+                    <keystore>${project.basedir}/keystore/s3tbx.ks</keystore>
                     <keystorealias>snap</keystorealias>
                     <keystorepassword>snap-123</keystorepassword>
                 </configuration>
