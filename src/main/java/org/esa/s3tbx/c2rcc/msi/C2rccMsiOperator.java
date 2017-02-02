@@ -4,6 +4,7 @@ import org.esa.s3tbx.c2rcc.C2rccConfigurable;
 import org.esa.s3tbx.c2rcc.ancillary.AtmosphericAuxdata;
 import org.esa.s3tbx.c2rcc.ancillary.AtmosphericAuxdataBuilder;
 import org.esa.s3tbx.c2rcc.util.NNUtils;
+import org.esa.s3tbx.c2rcc.util.RgbProfiles;
 import org.esa.snap.core.datamodel.Band;
 import org.esa.snap.core.datamodel.FlagCoding;
 import org.esa.snap.core.datamodel.GeoPos;
@@ -49,7 +50,6 @@ import java.util.logging.Level;
 
 import static org.esa.s3tbx.c2rcc.C2rccCommons.addBand;
 import static org.esa.s3tbx.c2rcc.C2rccCommons.addVirtualBand;
-import static org.esa.s3tbx.c2rcc.C2rccCommons.areSamplesValid;
 import static org.esa.s3tbx.c2rcc.C2rccCommons.ensureTimeInformation;
 import static org.esa.s3tbx.c2rcc.C2rccCommons.getTimeCoding;
 import static org.esa.s3tbx.c2rcc.ancillary.AncillaryCommons.fetchOzone;
@@ -1005,7 +1005,7 @@ public class C2rccMsiOperator extends PixelOperator implements C2rccConfigurable
         algorithm.setOutputUncertainties(outputUncertainties);
 
         timeCoding = sourceProduct.getSceneTimeCoding();
-        if(timeCoding == null) {
+        if (timeCoding == null) {
             // if not time coding is set, create one
             if (sourceProduct.getStartTime() == null || sourceProduct.getEndTime() == null) {
                 // if no start/end time is set, read it from the metadata
@@ -1174,6 +1174,9 @@ public class C2rccMsiOperator extends PixelOperator implements C2rccConfigurable
     }
 
     public static class Spi extends OperatorSpi {
+        static {
+            RgbProfiles.installS2MsiRgbProfiles();
+        }
 
         public Spi() {
             super(C2rccMsiOperator.class);

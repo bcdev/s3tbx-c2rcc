@@ -4,6 +4,7 @@ import org.esa.s3tbx.c2rcc.C2rccCommons;
 import org.esa.s3tbx.c2rcc.C2rccConfigurable;
 import org.esa.s3tbx.c2rcc.ancillary.AtmosphericAuxdata;
 import org.esa.s3tbx.c2rcc.ancillary.AtmosphericAuxdataBuilder;
+import org.esa.s3tbx.c2rcc.util.RgbProfiles;
 import org.esa.snap.core.datamodel.Band;
 import org.esa.snap.core.datamodel.GeoCoding;
 import org.esa.snap.core.datamodel.GeoPos;
@@ -441,6 +442,9 @@ public class C2rccModisOperator extends PixelOperator implements C2rccConfigurab
     }
 
     public static class Spi extends OperatorSpi {
+        static{
+            RgbProfiles.installModisRgbProfiles();
+        }
 
         public Spi() {
             super(C2rccModisOperator.class);

@@ -6,6 +6,7 @@ import org.esa.s3tbx.c2rcc.ancillary.AtmosphericAuxdata;
 import org.esa.s3tbx.c2rcc.ancillary.AtmosphericAuxdataBuilder;
 import org.esa.s3tbx.c2rcc.olci.C2rccOlciAlgorithm.Result;
 import org.esa.s3tbx.c2rcc.util.NNUtils;
+import org.esa.s3tbx.c2rcc.util.RgbProfiles;
 import org.esa.snap.core.datamodel.Band;
 import org.esa.snap.core.datamodel.FlagCoding;
 import org.esa.snap.core.datamodel.GeoPos;
@@ -1059,6 +1060,12 @@ public class C2rccOlciOperator extends PixelOperator implements C2rccConfigurabl
     }
 
     public static class Spi extends OperatorSpi {
+        static {
+            RgbProfiles.installRgbProfiles("C2RCC_OLCI",
+                                           "log(0.05 + 0.35 * %1$s_2 + 0.60 * %1$s_5 + %1$s_6 + 0.13 * %1$s_7)",
+                                           "log(0.05 + 0.21 * %1$s_3 + 0.50 * %1$s_4 + %1$s_5 + 0.38 * %1$s_6)",
+                                           "log(0.05 + 0.21 * %1$s_1 + 1.75 * %1$s_2 + 0.47 * %1$s_3 + 0.16 * %1$s_4)");
+        }
 
         public Spi() {
             super(C2rccOlciOperator.class);

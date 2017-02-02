@@ -6,6 +6,7 @@ import org.esa.s3tbx.c2rcc.C2rccConfigurable;
 import org.esa.s3tbx.c2rcc.ancillary.AtmosphericAuxdata;
 import org.esa.s3tbx.c2rcc.ancillary.AtmosphericAuxdataBuilder;
 import org.esa.s3tbx.c2rcc.util.NNUtils;
+import org.esa.s3tbx.c2rcc.util.RgbProfiles;
 import org.esa.snap.core.datamodel.Band;
 import org.esa.snap.core.datamodel.FlagCoding;
 import org.esa.snap.core.datamodel.GeoPos;
@@ -1117,6 +1118,10 @@ public class C2rccLandsat8Operator extends PixelOperator implements C2rccConfigu
     }
 
     public static class Spi extends OperatorSpi {
+        static{
+            RgbProfiles.installLandsat8RgbProfiles();
+        }
+
 
         public Spi() {
             super(C2rccLandsat8Operator.class);

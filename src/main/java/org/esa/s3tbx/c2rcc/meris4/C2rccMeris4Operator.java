@@ -6,6 +6,7 @@ import org.esa.s3tbx.c2rcc.ancillary.AtmosphericAuxdata;
 import org.esa.s3tbx.c2rcc.ancillary.AtmosphericAuxdataBuilder;
 import org.esa.s3tbx.c2rcc.meris4.C2rccMeris4Algorithm.Result;
 import org.esa.s3tbx.c2rcc.util.NNUtils;
+import org.esa.s3tbx.c2rcc.util.RgbProfiles;
 import org.esa.snap.core.datamodel.Band;
 import org.esa.snap.core.datamodel.FlagCoding;
 import org.esa.snap.core.datamodel.GeoPos;
@@ -72,16 +73,6 @@ import static org.esa.s3tbx.c2rcc.meris4.C2rccMeris4Algorithm.FLAG_INDEX_RHOW_OO
 import static org.esa.s3tbx.c2rcc.meris4.C2rccMeris4Algorithm.FLAG_INDEX_RTOSA_OOR;
 import static org.esa.s3tbx.c2rcc.meris4.C2rccMeris4Algorithm.FLAG_INDEX_RTOSA_OOS;
 import static org.esa.s3tbx.c2rcc.meris4.C2rccMeris4Algorithm.FLAG_INDEX_VALID_PE;
-import static org.esa.s3tbx.c2rcc.meris4.C2rccMeris4Algorithm.IDX_iop_rw;
-import static org.esa.s3tbx.c2rcc.meris4.C2rccMeris4Algorithm.IDX_iop_unciop;
-import static org.esa.s3tbx.c2rcc.meris4.C2rccMeris4Algorithm.IDX_iop_uncsumiop_unckd;
-import static org.esa.s3tbx.c2rcc.meris4.C2rccMeris4Algorithm.IDX_rtosa_aann;
-import static org.esa.s3tbx.c2rcc.meris4.C2rccMeris4Algorithm.IDX_rtosa_rpath;
-import static org.esa.s3tbx.c2rcc.meris4.C2rccMeris4Algorithm.IDX_rtosa_rw;
-import static org.esa.s3tbx.c2rcc.meris4.C2rccMeris4Algorithm.IDX_rtosa_trans;
-import static org.esa.s3tbx.c2rcc.meris4.C2rccMeris4Algorithm.IDX_rw_iop;
-import static org.esa.s3tbx.c2rcc.meris4.C2rccMeris4Algorithm.IDX_rw_kd;
-import static org.esa.s3tbx.c2rcc.meris4.C2rccMeris4Algorithm.IDX_rw_rwnorm;
 import static org.esa.s3tbx.c2rcc.meris4.C2rccMeris4Algorithm.merband12_ix;
 import static org.esa.s3tbx.c2rcc.meris4.C2rccMeris4Algorithm.merband15_ix;
 
@@ -1121,6 +1112,9 @@ public class C2rccMeris4Operator extends PixelOperator implements C2rccConfigura
     }
 
     public static class Spi extends OperatorSpi {
+        static {
+            RgbProfiles.installMeris4RgbProfiles();
+        }
 
         public Spi() {
             super(C2rccMeris4Operator.class);

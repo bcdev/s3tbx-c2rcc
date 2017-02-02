@@ -239,9 +239,6 @@ public class C2rccOperator extends Operator {
     }
 
     public static class Spi extends OperatorSpi {
-        static {
-            RgbProfiles.installMerisRgbProfiles();
-        }
 
         public Spi() {
             super(C2rccOperator.class);

@@ -1,9 +1,7 @@
 package org.esa.s3tbx.c2rcc.util;
 
-import org.esa.s3tbx.c2rcc.util.RgbProfiles;
 import org.esa.snap.core.datamodel.RGBImageProfile;
 import org.esa.snap.core.datamodel.RGBImageProfileManager;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -42,6 +40,20 @@ public class RgbProfilesTest {
     public void installMerisRgbProfiles() throws Exception {
         assertEquals(0, profileManager.getProfileCount());
         RgbProfiles.installMerisRgbProfiles();
+        assertEquals(9, profileManager.getProfileCount());
+    }
+
+    @Test
+    public void installMeris4RgbProfiles() throws Exception {
+        assertEquals(0, profileManager.getProfileCount());
+        RgbProfiles.installMeris4RgbProfiles();
+        assertEquals(9, profileManager.getProfileCount());
+    }
+
+    @Test
+    public void installS2MsiRgbProfiles() throws Exception {
+        assertEquals(0, profileManager.getProfileCount());
+        RgbProfiles.installS2MsiRgbProfiles();
         assertEquals(9, profileManager.getProfileCount());
     }
 
