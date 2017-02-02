@@ -165,6 +165,8 @@ public class C2rccMeris4Operator extends PixelOperator implements C2rccConfigura
     private static final String RADIANCE_BANDNAME_PATTERN = "M%02d_radiance";
     private static final String SOLAR_FLUX_BANDNAME_PATTERN = "solar_flux_band_%d";
 
+    private static final String PRODUCT_TYPE = "C2RCC_MERIS4";
+
     private static final String[] alternativeNetDirNames = new String[]{
             "rtosa_aann",
             "rtosa_rw",
@@ -724,6 +726,7 @@ public class C2rccMeris4Operator extends PixelOperator implements C2rccConfigura
         productConfigurer.copyMetadata();
 
         final Product targetProduct = productConfigurer.getTargetProduct();
+        targetProduct.setProductType(PRODUCT_TYPE);
         C2rccCommons.ensureTimeInformation(targetProduct, sourceProduct.getStartTime(), sourceProduct.getEndTime(), timeCoding);
 
         targetProduct.setPreferredTileSize(128, 128);

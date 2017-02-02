@@ -126,6 +126,8 @@ public class C2rccOlciOperator extends PixelOperator implements C2rccConfigurabl
     private static final int UNC_KD489_IX = SINGLE_IX + 17;
     private static final int UNC_KDMIN_IX = SINGLE_IX + 18;
 
+    private static final String PRODUCT_TYPE = "C2RCC_OLCI";
+
     private static final int C2RCC_FLAGS_IX = SINGLE_IX + 19;
 
     private static final String RADIANCE_BANDNAME_PATTERN = "Oa%02d_radiance";
@@ -664,6 +666,7 @@ public class C2rccOlciOperator extends PixelOperator implements C2rccConfigurabl
         productConfigurer.copyMetadata();
 
         final Product targetProduct = productConfigurer.getTargetProduct();
+        targetProduct.setProductType(PRODUCT_TYPE);
         C2rccCommons.ensureTimeInformation(targetProduct, sourceProduct.getStartTime(), sourceProduct.getEndTime(), timeCoding);
 
         targetProduct.setPreferredTileSize(128, 128);

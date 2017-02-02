@@ -51,6 +51,9 @@ public class SeawifsProductSignatureTest {
     private static final int EXPECTED_VPE_MASK = 0x80000000;
     private static final String EXPECTED_L2_FLAGS = "l2_flags";
 
+    private static final String EXPECTED_PRODUCT_TYPE = "C2RCC_SEAWIFS";
+
+
     @Test
     public void testProductSignature_Default() throws FactoryException, TransformException {
 
@@ -110,6 +113,8 @@ public class SeawifsProductSignatureTest {
         FlagCoding flagCoding = targetProduct.getFlagCodingGroup().get(EXPECTED_C2RCC_FLAGS);
         assertNotNull(flagCoding.getFlag(EXPECTED_VALID_PE_FLAG));
         assertEquals(EXPECTED_VPE_MASK, flagCoding.getFlagMask(EXPECTED_VALID_PE_FLAG));
+
+        assertEquals(EXPECTED_PRODUCT_TYPE, targetProduct.getProductType());
     }
 
     private void assertBands(Product targetProduct, String... expectedBands) {

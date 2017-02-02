@@ -88,6 +88,9 @@ public class C2rccModisOperator extends PixelOperator implements C2rccConfigurab
     static final String SOURCE_RADIANCE_NAME_PREFIX = "rhot_";
     static final String RASTER_NAME_L2_FLAGS = "l2_flags";
 
+    private static final String PRODUCT_TYPE = "C2RCC_MODIS";
+
+
     @SourceProduct(label = "MODIS L1C product",
             description = "MODIS L1C source product.")
     private Product sourceProduct;
@@ -380,6 +383,7 @@ public class C2rccModisOperator extends PixelOperator implements C2rccConfigurab
         super.configureTargetProduct(productConfigurer);
         productConfigurer.copyMetadata();
         Product targetProduct = productConfigurer.getTargetProduct();
+        targetProduct.setProductType(PRODUCT_TYPE);
         prepareTargetProduct(targetProduct, sourceProduct, SOURCE_RADIANCE_NAME_PREFIX, NN_INPUT_REFLEC_WAVELENGTHS,
                              outputRtosa, outputAsRrs);
         C2rccCommons.ensureTimeInformation(targetProduct, sourceProduct.getStartTime(), sourceProduct.getEndTime(), timeCoding);

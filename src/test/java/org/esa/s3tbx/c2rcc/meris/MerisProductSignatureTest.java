@@ -78,6 +78,8 @@ public class MerisProductSignatureTest {
     private static final String EXPECTED_L1_FLAGS = "l1_flags";
     private static final String EXPECTED_C2RCC_FLAGS = "c2rcc_flags";
 
+    private static final String EXPECTED_PRODUCT_TYPE = "C2RCC_MERIS";
+
     @Test
     public void testProductSignature_Default() throws FactoryException, TransformException {
 
@@ -85,7 +87,7 @@ public class MerisProductSignatureTest {
 
         Product targetProduct = operator.getTargetProduct();
 
-        assertDefaultBands(targetProduct, false);
+        assertDefaults(targetProduct, false);
     }
 
     @Test
@@ -96,7 +98,7 @@ public class MerisProductSignatureTest {
         operator.setOutputOos(true);
 
         Product targetProduct = operator.getTargetProduct();
-        assertDefaultBands(targetProduct, true);
+        assertDefaults(targetProduct, true);
         assertBands(targetProduct, EXPECTED_OOS_RTOSA);
         assertBands(targetProduct, EXPECTED_OOS_RRS);
 
@@ -125,7 +127,7 @@ public class MerisProductSignatureTest {
         operator.setOutputRtosaGcAann(true);
         Product targetProduct = operator.getTargetProduct();
 
-        assertDefaultBands(targetProduct, false);
+        assertDefaults(targetProduct, false);
         assertBands(targetProduct, EXPECTED_RTOSA_GC_BANDS);
         assertBands(targetProduct, EXPECTED_RTOSA_GCAANN_BANDS);
     }
@@ -137,7 +139,7 @@ public class MerisProductSignatureTest {
         operator.setOutputRtoa(true);
         Product targetProduct = operator.getTargetProduct();
 
-        assertDefaultBands(targetProduct, false);
+        assertDefaults(targetProduct, false);
         assertBands(targetProduct, EXPECTED_RTOA_BANDS);
     }
     
@@ -151,7 +153,7 @@ public class MerisProductSignatureTest {
         operator.setOutputOos(true);
         Product targetProduct = operator.getTargetProduct();
 
-        assertDefaultBands(targetProduct, false);
+        assertDefaults(targetProduct, false);
         assertBands(targetProduct, EXPECTED_RPATH_BANDS);
         assertBands(targetProduct, EXPECTED_TDOWN_BANDS);
         assertBands(targetProduct, EXPECTED_TUP_BANDS);
@@ -166,7 +168,7 @@ public class MerisProductSignatureTest {
         operator.setOutputUncertainties(true);
         Product targetProduct = operator.getTargetProduct();
 
-        assertDefaultBands(targetProduct, false);
+        assertDefaults(targetProduct, false);
         assertBands(targetProduct, EXPECTED_IOP_UNC_BANDS);
     }
 
@@ -178,13 +180,13 @@ public class MerisProductSignatureTest {
         operator.setOutputKd(true);
         Product targetProduct = operator.getTargetProduct();
 
-        assertDefaultBands(targetProduct, false);
+        assertDefaults(targetProduct, false);
         assertBands(targetProduct, EXPECTED_IOP_UNC_BANDS);
         assertBands(targetProduct, EXPECTED_KD_UNC_BANDS);
         assertBands(targetProduct, EXPECTED_KD_BANDS);
     }
 
-    private void assertDefaultBands(Product targetProduct, boolean asRrs) {
+    private void assertDefaults(Product targetProduct, boolean asRrs) {
         assertMandatoryBands(targetProduct);
         if(asRrs) {
             assertBands(targetProduct, EXPECTED_RRS_BANDS);
@@ -196,6 +198,8 @@ public class MerisProductSignatureTest {
         assertBands(targetProduct, EXPECTED_KD_BANDS);
         assertBands(targetProduct, EXPECTED_KD_UNC_BANDS);
         assertBands(targetProduct, EXPECTED_IOP_UNC_BANDS);
+
+        assertEquals(EXPECTED_PRODUCT_TYPE, targetProduct.getProductType());
     }
 
     private void assertMandatoryBands(Product targetProduct) {

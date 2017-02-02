@@ -154,6 +154,7 @@ public class C2rccMsiOperator extends PixelOperator implements C2rccConfigurable
 
     private static final int C2RCC_FLAGS_IX = SINGLE_IX + 19;
 
+    private static final String PRODUCT_TYPE = "C2RCC_S2-MSI";
 
     private static final String[] alternativeNetDirNames = new String[]{
             "rtosa_aann",
@@ -698,6 +699,7 @@ public class C2rccMsiOperator extends PixelOperator implements C2rccConfigurable
         productConfigurer.copyMetadata();
 
         final Product targetProduct = productConfigurer.getTargetProduct();
+        targetProduct.setProductType(PRODUCT_TYPE);
         ensureTimeInformation(targetProduct, getStartTime(), getEndTime(), timeCoding);
 
         targetProduct.setPreferredTileSize(128, 128);

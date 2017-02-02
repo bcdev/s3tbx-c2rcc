@@ -87,6 +87,8 @@ public class C2rccSeaWiFSOperator extends PixelOperator implements C2rccConfigur
 
     private static final int RTOSA_IN_1_IX = WL_BAND_COUNT + 8;
     private static final int RTOSA_OUT_1_IX = RTOSA_IN_1_IX + WL_BAND_COUNT;
+    private static final String PRODUCT_TYPE = "C2RCC_SEAWIFS";
+
 
     /*
      * Source product type has been changed from L1B to L1C in commit
@@ -319,6 +321,7 @@ public class C2rccSeaWiFSOperator extends PixelOperator implements C2rccConfigur
         super.configureTargetProduct(productConfigurer);
         productConfigurer.copyMetadata();
         Product targetProduct = productConfigurer.getTargetProduct();
+        targetProduct.setProductType(PRODUCT_TYPE);
         TargetProductPreparer.prepareTargetProduct(targetProduct, sourceProduct, SOURCE_RADIANCE_NAME_PREFIX, seawifsWavelengths,
                                                    outputRtosa, outputAsRrs);
         C2rccCommons.ensureTimeInformation(targetProduct, sourceProduct.getStartTime(), sourceProduct.getEndTime(), timeCoding);

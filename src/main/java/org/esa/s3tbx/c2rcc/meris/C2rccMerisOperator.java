@@ -124,6 +124,8 @@ public class C2rccMerisOperator extends PixelOperator implements C2rccConfigurab
 
     private static final int C2RCC_FLAGS_IX = SINGLE_IX + 19;
 
+    private static final String PRODUCT_TYPE = "C2RCC_MERIS";
+
     static final String[] alternativeNetDirNames = new String[]{
             "rtosa_aann",
             "rtosa_rw",
@@ -675,6 +677,7 @@ public class C2rccMerisOperator extends PixelOperator implements C2rccConfigurab
         productConfigurer.copyMetadata();
 
         final Product targetProduct = productConfigurer.getTargetProduct();
+        targetProduct.setProductType(PRODUCT_TYPE);
         C2rccCommons.ensureTimeInformation(targetProduct, sourceProduct.getStartTime(), sourceProduct.getEndTime(), timeCoding);
         ProductUtils.copyFlagBands(sourceProduct, targetProduct, true);
 

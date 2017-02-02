@@ -5,7 +5,6 @@ import org.esa.s3tbx.c2rcc.C2rccCommons;
 import org.esa.s3tbx.c2rcc.C2rccConfigurable;
 import org.esa.s3tbx.c2rcc.ancillary.AtmosphericAuxdata;
 import org.esa.s3tbx.c2rcc.ancillary.AtmosphericAuxdataBuilder;
-import org.esa.s3tbx.c2rcc.meris.C2rccMerisAlgorithm;
 import org.esa.s3tbx.c2rcc.util.NNUtils;
 import org.esa.snap.core.datamodel.Band;
 import org.esa.snap.core.datamodel.FlagCoding;
@@ -147,6 +146,8 @@ public class C2rccLandsat8Operator extends PixelOperator implements C2rccConfigu
     private static final int UNC_KDMIN_IX = OOS_RTOSA_IX + 18;
 
     private static final int C2RCC_FLAGS_IX = OOS_RTOSA_IX + 19;
+
+    private static final String PRODUCT_TYPE = "C2RCC_LANDSAT-8";
 
     private static final String[] alternativeNetDirNames = new String[]{
             "rtosa_aann",
@@ -596,6 +597,7 @@ public class C2rccLandsat8Operator extends PixelOperator implements C2rccConfigu
     @Override
     protected void configureTargetProduct(ProductConfigurer productConfigurer) {
         final Product targetProduct = productConfigurer.getTargetProduct();
+        targetProduct.setProductType(PRODUCT_TYPE);
         targetProduct.setStartTime(getSourceProduct().getStartTime());
         targetProduct.setEndTime(getSourceProduct().getEndTime());
         ProductUtils.copyTiePointGrids(resampledProduct, targetProduct);
