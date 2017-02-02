@@ -6,6 +6,7 @@ import org.esa.s3tbx.c2rcc.modis.C2rccModisOperator;
 import org.esa.s3tbx.c2rcc.msi.C2rccMsiOperator;
 import org.esa.s3tbx.c2rcc.olci.C2rccOlciOperator;
 import org.esa.s3tbx.c2rcc.seawifs.C2rccSeaWiFSOperator;
+import org.esa.s3tbx.c2rcc.util.RgbProfiles;
 import org.esa.s3tbx.c2rcc.viirs.C2rccViirsOperator;
 import org.esa.snap.core.datamodel.Product;
 import org.esa.snap.core.gpf.Operator;
@@ -239,7 +240,7 @@ public class C2rccOperator extends Operator {
 
     public static class Spi extends OperatorSpi {
         static {
-            C2rccCommons.installRGBProfiles();
+            RgbProfiles.installMerisRgbProfiles();
         }
 
         public Spi() {

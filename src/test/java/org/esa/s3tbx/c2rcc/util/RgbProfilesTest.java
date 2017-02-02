@@ -1,8 +1,11 @@
-package org.esa.s3tbx.c2rcc;
+package org.esa.s3tbx.c2rcc.util;
 
+import org.esa.s3tbx.c2rcc.util.RgbProfiles;
 import org.esa.snap.core.datamodel.RGBImageProfile;
 import org.esa.snap.core.datamodel.RGBImageProfileManager;
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -11,14 +14,19 @@ import static org.junit.Assert.*;
 /**
  * @author Marco Peters
  */
-public class C2rccCommonsTest {
+public class RgbProfilesTest {
     private static RGBImageProfileManager profileManager = RGBImageProfileManager.getInstance();
     private static RGBImageProfile[] storedProfiles;
 
     @BeforeClass
-    public static void setUp() throws Exception {
+    public static void setUpClass() throws Exception {
         storedProfiles = profileManager.getAllProfiles();
         removeProfiles(storedProfiles);
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        removeProfiles(profileManager.getAllProfiles());
     }
 
     @AfterClass
@@ -31,9 +39,9 @@ public class C2rccCommonsTest {
     }
 
     @Test
-    public void installRGBProfiles() throws Exception {
+    public void installMerisRgbProfiles() throws Exception {
         assertEquals(0, profileManager.getProfileCount());
-        C2rccCommons.installRGBProfiles();
+        RgbProfiles.installMerisRgbProfiles();
         assertEquals(9, profileManager.getProfileCount());
     }
 
