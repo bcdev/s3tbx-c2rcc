@@ -246,6 +246,8 @@ public class MerisProductSignatureTest {
         product.addBand(C2rccMerisOperator.RASTER_NAME_SUN_ZENITH, "42");
         product.addBand(C2rccMerisOperator.RASTER_NAME_VIEW_AZIMUTH, "42");
         product.addBand(C2rccMerisOperator.RASTER_NAME_VIEW_ZENITH, "42");
+        product.addBand(C2rccMerisOperator.RASTER_NAME_ATM_PRESS, "980");
+        product.addBand(C2rccMerisOperator.RASTER_NAME_OZONE, "306");
         Band flagBand = product.addBand(C2rccMerisOperator.RASTER_NAME_L1_FLAGS, ProductData.TYPE_INT8);
         FlagCoding l1FlagsCoding = new FlagCoding(C2rccMerisOperator.RASTER_NAME_L1_FLAGS);
         l1FlagsCoding.addFlag("INVALID", 1, "description");
