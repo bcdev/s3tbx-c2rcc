@@ -1,5 +1,6 @@
 package org.esa.s3tbx.c2rcc.msi;
 
+import org.esa.s3tbx.c2rcc.meris.C2rccMerisOperator;
 import org.esa.snap.core.datamodel.CrsGeoCoding;
 import org.esa.snap.core.datamodel.MetadataAttribute;
 import org.esa.snap.core.datamodel.MetadataElement;
@@ -150,6 +151,16 @@ public class MsiProductSignatureTest {
     }
 
     @Test
+    public void testProductSignature_DeriveRwAlternative() throws FactoryException, TransformException {
+
+        C2rccMsiOperator operator = createDefaultOperator();
+        operator.setDeriveRwFromPathAndTransmittance(true);
+
+        Product targetProduct = operator.getTargetProduct();
+        assertDefaults(targetProduct, false);
+    }
+
+    @Test
     public void testProductSignature_DefaultWithKd() throws FactoryException, TransformException {
 
         C2rccMsiOperator operator = createDefaultOperator();
@@ -211,8 +222,8 @@ public class MsiProductSignatureTest {
 
         product.addBand(C2rccMsiOperator.RASTER_NAME_SUN_AZIMUTH, "42");
         product.addBand(C2rccMsiOperator.RASTER_NAME_SUN_ZENITH, "42");
-        product.addBand(C2rccMsiOperator.RASTER_NAME_VIEWING_AZIMUTH, "42");
-        product.addBand(C2rccMsiOperator.RASTER_NAME_VIEWING_ZENITH, "42");
+        product.addBand(C2rccMsiOperator.RASTER_NAME_VIEW_AZIMUTH, "42");
+        product.addBand(C2rccMsiOperator.RASTER_NAME_VIEW_ZENITH, "42");
 
         product.setSceneGeoCoding(new CrsGeoCoding(DefaultGeographicCRS.WGS84, 1, 1, 10, 50, 1, 1));
 

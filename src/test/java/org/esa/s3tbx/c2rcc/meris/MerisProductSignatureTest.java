@@ -101,7 +101,6 @@ public class MerisProductSignatureTest {
         assertDefaults(targetProduct, true);
         assertBands(targetProduct, EXPECTED_OOS_RTOSA);
         assertBands(targetProduct, EXPECTED_OOS_RRS);
-
     }
 
     @Test
@@ -160,6 +159,17 @@ public class MerisProductSignatureTest {
         assertBands(targetProduct, EXPECTED_OOS_RTOSA);
         assertBands(targetProduct, EXPECTED_OOS_RHOW);
     }
+
+    @Test
+    public void testProductSignature_DeriveRwAlternative() throws FactoryException, TransformException {
+
+        C2rccMerisOperator operator = createDefaultOperator();
+        operator.setDeriveRwFromPathAndTransmittance(true);
+
+        Product targetProduct = operator.getTargetProduct();
+        assertDefaults(targetProduct, false);
+    }
+
 
     @Test
     public void testProductSignature_DefaultWithUncertainties() throws FactoryException, TransformException {

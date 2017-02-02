@@ -256,6 +256,10 @@ public class C2rccOlciOperator extends PixelOperator implements C2rccConfigurabl
             label = "Output AC reflectances as rrs instead of rhow")
     private boolean outputAsRrs;
 
+    @Parameter(defaultValue = "false", description = "Alternative way of calculating water reflectance. Still experimental.",
+            label = "Derive water reflectance from path radiance and transmittance")
+    private boolean deriveRwFromPathAndTransmittance;
+
     @Parameter(defaultValue = "true", description =
             "If selected, the ECMWF auxiliary data (total_ozone, sea_level_pressure) of the source product is used",
             label = "Use ECMWF aux data of source product")
@@ -377,6 +381,10 @@ public class C2rccOlciOperator extends PixelOperator implements C2rccConfigurabl
     @Override
     public void setOutputAsRrs(boolean asRrs) {
         outputAsRrs = asRrs;
+    }
+
+    public void setDeriveRwFromPathAndTransmittance(boolean deriveRwFromPathAndTransmittance) {
+        this.deriveRwFromPathAndTransmittance = deriveRwFromPathAndTransmittance;
     }
 
     public void setOutputKd(boolean outputKd) {
@@ -964,6 +972,7 @@ public class C2rccOlciOperator extends PixelOperator implements C2rccConfigurabl
         algorithm.setOutputOos(outputOos);
         algorithm.setOutputKd(outputKd);
         algorithm.setOutputUncertainties(outputUncertainties);
+        algorithm.setDeriveRwFromPathAndTransmittance(deriveRwFromPathAndTransmittance);
 
         timeCoding = C2rccCommons.getTimeCoding(sourceProduct);
         initAtmosphericAuxdata();

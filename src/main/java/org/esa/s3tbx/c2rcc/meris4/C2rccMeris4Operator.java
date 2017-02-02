@@ -306,6 +306,10 @@ public class C2rccMeris4Operator extends PixelOperator implements C2rccConfigura
             label = "Output AC reflectances as rrs instead of rhow")
     private boolean outputAsRrs;
 
+    @Parameter(defaultValue = "false", description = "Alternative way of calculating water reflectance. Still experimental.",
+            label = "Derive water reflectance from path radiance and transmittance")
+    private boolean deriveRwFromPathAndTransmittance;
+
     @Parameter(defaultValue = "true", description =
             "If selected, the ECMWF auxiliary data (total_ozone, sea_level_pressure) of the source product is used",
             label = "Use ECMWF aux data of source product")
@@ -427,6 +431,10 @@ public class C2rccMeris4Operator extends PixelOperator implements C2rccConfigura
     @Override
     public void setOutputAsRrs(boolean asRrs) {
         outputAsRrs = asRrs;
+    }
+
+    public void setDeriveRwFromPathAndTransmittance(boolean deriveRwFromPathAndTransmittance) {
+        this.deriveRwFromPathAndTransmittance = deriveRwFromPathAndTransmittance;
     }
 
     public void setOutputKd(boolean outputKd) {
@@ -966,25 +974,33 @@ public class C2rccMeris4Operator extends PixelOperator implements C2rccConfigura
 
     @Override
     protected void prepareInputs() throws OperatorException {
+        String missingRasterMsgFormat = "Invalid source product, raster '%s' required";
         for (int i = 1; i <= BAND_COUNT; i++) {
-            assertSourceBand(getRadianceBandName(i));
-            assertSourceBand(getSolarFluxBandname(i));
+            assertSourceRaster(getRadianceBandName(i), missingRasterMsgFormat);
+            assertSourceRaster(getSolarFluxBandname(i), missingRasterMsgFormat);
         }
+
+        assertSourceRaster(RASTER_NAME_SUN_ZENITH, missingRasterMsgFormat);
+        assertSourceRaster(RASTER_NAME_SUN_AZIMUTH, missingRasterMsgFormat);
+        assertSourceRaster(RASTER_NAME_VIEWING_ZENITH, missingRasterMsgFormat);
+        assertSourceRaster(RASTER_NAME_VIEWING_AZIMUTH, missingRasterMsgFormat);
+
+        if(useEcmwfAuxData){
+            String ecmwfMsg = "For ECMWF usage a '%s' raster is required";
+            assertSourceRaster(RASTER_NAME_SEA_LEVEL_PRESSURE, ecmwfMsg);
+            assertSourceRaster(RASTER_NAME_TOTAL_OZONE, ecmwfMsg);
+        }
+
+        sourceProduct.isCompatibleBandArithmeticExpression(validPixelExpression);
+
         useSnapDem = !sourceProduct.containsRasterDataNode(RASTER_NAME_ALTITUDE);
         if (useSnapDem) {
             elevationModel = ElevationModelRegistry.getInstance().getDescriptor("GETASSE30").createDem(Resampling.BILINEAR_INTERPOLATION);
         }
 
-        sourceProduct.isCompatibleBandArithmeticExpression(validPixelExpression);
-
         if (sourceProduct.getSceneGeoCoding() == null) {
             throw new OperatorException("The source product must be geo-coded.");
         }
-
-        assertSourceRaster(RASTER_NAME_SUN_ZENITH);
-        assertSourceRaster(RASTER_NAME_SUN_AZIMUTH);
-        assertSourceRaster(RASTER_NAME_VIEWING_ZENITH);
-        assertSourceRaster(RASTER_NAME_VIEWING_AZIMUTH);
 
         try {
             if (StringUtils.isNotNullAndNotEmpty(alternativeNNPath)) {
@@ -1016,6 +1032,7 @@ public class C2rccMeris4Operator extends PixelOperator implements C2rccConfigura
         algorithm.setOutputOos(outputOos);
         algorithm.setOutputKd(outputKd);
         algorithm.setOutputUncertainties(outputUncertainties);
+        algorithm.setDeriveRwFromPathAndTransmittance(deriveRwFromPathAndTransmittance);
 
         timeCoding = C2rccCommons.getTimeCoding(sourceProduct);
         initAtmosphericAuxdata();
@@ -1099,15 +1116,9 @@ public class C2rccMeris4Operator extends PixelOperator implements C2rccConfigura
         }
     }
 
-    private void assertSourceRaster(String name) {
+    private void assertSourceRaster(String name, String msgFormat) {
         if (!sourceProduct.containsRasterDataNode(name)) {
-            throw new OperatorException("Invalid source product, raster '" + name + "' required");
-        }
-    }
-
-    private void assertSourceBand(String name) {
-        if (!sourceProduct.containsBand(name)) {
-            throw new OperatorException("Invalid source product, band '" + name + "' required");
+            throw new OperatorException(String.format(msgFormat, name));
         }
     }
 

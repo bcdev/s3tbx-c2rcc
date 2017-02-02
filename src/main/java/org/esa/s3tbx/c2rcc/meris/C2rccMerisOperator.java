@@ -321,6 +321,10 @@ public class C2rccMerisOperator extends PixelOperator implements C2rccConfigurab
             label = "Output AC reflectances as rrs instead of rhow")
     private boolean outputAsRrs;
 
+    @Parameter(defaultValue = "false", description = "Alternative way of calculating water reflectance. Still experimental.",
+            label = "Derive water reflectance from path radiance and transmittance")
+    private boolean deriveRwFromPathAndTransmittance;
+
     @Parameter(defaultValue = "false",
             description = "If 'false', use solar flux from source product")
     private boolean useDefaultSolarFlux;
@@ -435,6 +439,10 @@ public class C2rccMerisOperator extends PixelOperator implements C2rccConfigurab
     @Override
     public void setOutputAsRrs(boolean asRrs) {
         outputAsRrs = asRrs;
+    }
+
+    public void setDeriveRwFromPathAndTransmittance(boolean deriveRwFromPathAndTransmittance) {
+        this.deriveRwFromPathAndTransmittance = deriveRwFromPathAndTransmittance;
     }
 
     public void setOutputKd(boolean outputKd) {
@@ -1008,7 +1016,14 @@ public class C2rccMerisOperator extends PixelOperator implements C2rccConfigurab
     @Override
     protected void prepareInputs() throws OperatorException {
         for (int i = 1; i <= BAND_COUNT; i++) {
-            assertSourceBand(SOURCE_RADIANCE_NAME_PREFIX + i);
+            String msgFormat = "Invalid source product, raster '%s' required";
+            assertSourceRaster(SOURCE_RADIANCE_NAME_PREFIX + i, msgFormat);
+        }
+
+        if(useEcmwfAuxData){
+            String ecmwfMsg = "For ECMWF usage a '%s' raster is required";
+            assertSourceRaster(RASTER_NAME_ATM_PRESS, ecmwfMsg);
+            assertSourceRaster(RASTER_NAME_OZONE, ecmwfMsg);
         }
 
         assertVpeIsApplicable();
@@ -1047,6 +1062,7 @@ public class C2rccMerisOperator extends PixelOperator implements C2rccConfigurab
         algorithm.setOutputOos(outputOos);
         algorithm.setOutputKd(outputKd);
         algorithm.setOutputUncertainties(outputUncertainties);
+        algorithm.setDeriveRwFromPathAndTransmittance(deriveRwFromPathAndTransmittance);
 
         if (useDefaultSolarFlux) {  // not the sol flux values from the input product
             solarFluxLazyLookup = new SolarFluxLazyLookup(DEFAULT_SOLAR_FLUX);
@@ -1111,9 +1127,9 @@ public class C2rccMerisOperator extends PixelOperator implements C2rccConfigurab
         }
     }
 
-    private void assertSourceBand(String name) {
-        if (sourceProduct.getBand(name) == null) {
-            throw new OperatorException("Invalid source product, band '" + name + "' required");
+    private void assertSourceRaster(String name, String msgFormat) {
+        if (sourceProduct.getRasterDataNode(name) == null) {
+            throw new OperatorException(String.format(msgFormat, name));
         }
     }
 

@@ -302,6 +302,10 @@ public class C2rccLandsat8Operator extends PixelOperator implements C2rccConfigu
             label = "Output AC reflectances as rrs instead of rhow")
     private boolean outputAsRrs;
 
+    @Parameter(defaultValue = "false", description = "Alternative way of calculating water reflectance. Still experimental.",
+            label = "Derive water reflectance from path radiance and transmittance")
+    private boolean deriveRwFromPathAndTransmittance;
+
     @Parameter(defaultValue = "true", label = "Output TOA reflectances")
     private boolean outputRtoa;
 
@@ -404,6 +408,10 @@ public class C2rccLandsat8Operator extends PixelOperator implements C2rccConfigu
     @Override
     public void setOutputAsRrs(boolean asRrs) {
         outputAsRrs = asRrs;
+    }
+
+    public void setDeriveRwFromPathAndTransmittance(boolean deriveRwFromPathAndTransmittance) {
+        this.deriveRwFromPathAndTransmittance = deriveRwFromPathAndTransmittance;
     }
 
     public void setOutputKd(boolean outputKd) {
@@ -1061,6 +1069,7 @@ public class C2rccLandsat8Operator extends PixelOperator implements C2rccConfigu
         algorithm.setOutputOos(outputOos);
         algorithm.setOutputKd(outputKd);
         algorithm.setOutputUncertainties(outputUncertainties);
+        algorithm.setDeriveRwFromPathAndTransmittance(deriveRwFromPathAndTransmittance);
 
         timeCoding = C2rccCommons.getTimeCoding(sourceProduct);
         initAtmosphericAuxdata();

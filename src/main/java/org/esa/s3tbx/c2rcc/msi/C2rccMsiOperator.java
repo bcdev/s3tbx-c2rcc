@@ -172,8 +172,8 @@ public class C2rccMsiOperator extends PixelOperator implements C2rccConfigurable
     private static final String[] c2rccNNResourcePaths = new String[10];
     static final String RASTER_NAME_SUN_ZENITH = "sun_zenith";
     static final String RASTER_NAME_SUN_AZIMUTH = "sun_azimuth";
-    static final String RASTER_NAME_VIEWING_ZENITH = "view_zenith_mean";
-    static final String RASTER_NAME_VIEWING_AZIMUTH = "view_azimuth_mean";
+    static final String RASTER_NAME_VIEW_ZENITH = "view_zenith_mean";
+    static final String RASTER_NAME_VIEW_AZIMUTH = "view_azimuth_mean";
     private static final String RASTER_NAME_SEA_LEVEL_PRESSURE = "sea_level_pressure";
     private static final String RASTER_NAME_TOTAL_OZONE = "total_ozone";
 
@@ -291,6 +291,10 @@ public class C2rccMsiOperator extends PixelOperator implements C2rccConfigurable
             label = "Output AC reflectances as rrs instead of rhow")
     private boolean outputAsRrs;
 
+    @Parameter(defaultValue = "false", description = "Alternative way of calculating water reflectance. Still experimental.",
+            label = "Derive water reflectance from path radiance and transmittance")
+    private boolean deriveRwFromPathAndTransmittance;
+
     @Parameter(defaultValue = "false", description =
             "If selected, the ECMWF auxiliary data (total_ozone, sea_level_pressure) of the source product is used",
             label = "Use ECMWF aux data of source product")
@@ -401,6 +405,10 @@ public class C2rccMsiOperator extends PixelOperator implements C2rccConfigurable
         outputAsRrs = asRadianceRefl;
     }
 
+    public void setDeriveRwFromPathAndTransmittance(boolean deriveRwFromPathAndTransmittance) {
+        this.deriveRwFromPathAndTransmittance = deriveRwFromPathAndTransmittance;
+    }
+
     void setOutputKd(boolean outputKd) {
         this.outputKd = outputKd;
     }
@@ -458,9 +466,9 @@ public class C2rccMsiOperator extends PixelOperator implements C2rccConfigurable
         }
 
         return product.containsRasterDataNode(RASTER_NAME_SUN_ZENITH)
-                && product.containsRasterDataNode(RASTER_NAME_SUN_ZENITH)
-                && product.containsRasterDataNode(RASTER_NAME_SUN_ZENITH)
-                && product.containsRasterDataNode(RASTER_NAME_SUN_ZENITH);
+                && product.containsRasterDataNode(RASTER_NAME_SUN_AZIMUTH)
+                && product.containsRasterDataNode(RASTER_NAME_VIEW_ZENITH)
+                && product.containsRasterDataNode(RASTER_NAME_VIEW_AZIMUTH);
     }
 
     @Override
@@ -589,8 +597,8 @@ public class C2rccMsiOperator extends PixelOperator implements C2rccConfigurable
         }
         sc.defineSample(SUN_ZEN_IX, RASTER_NAME_SUN_ZENITH);
         sc.defineSample(SUN_AZI_IX, RASTER_NAME_SUN_AZIMUTH);
-        sc.defineSample(VIEW_ZEN_IX, RASTER_NAME_VIEWING_ZENITH);
-        sc.defineSample(VIEW_AZI_IX, RASTER_NAME_VIEWING_AZIMUTH);
+        sc.defineSample(VIEW_ZEN_IX, RASTER_NAME_VIEW_ZENITH);
+        sc.defineSample(VIEW_AZI_IX, RASTER_NAME_VIEW_AZIMUTH);
         if (StringUtils.isNotNullAndNotEmpty(validPixelExpression)) {
             sc.defineComputedSample(VALID_PIXEL_IX, ProductData.TYPE_UINT8, validPixelExpression);
         } else {
@@ -969,10 +977,17 @@ public class C2rccMsiOperator extends PixelOperator implements C2rccConfigurable
             throw new OperatorException("The source product must be geo-coded.");
         }
 
-        assertSourceRaster(RASTER_NAME_SUN_ZENITH);
-        assertSourceRaster(RASTER_NAME_SUN_AZIMUTH);
-        assertSourceRaster(RASTER_NAME_VIEWING_ZENITH);
-        assertSourceRaster(RASTER_NAME_VIEWING_AZIMUTH);
+        String msgFormat = "Invalid source product, raster '%s' required";
+        assertSourceRaster(RASTER_NAME_SUN_ZENITH, msgFormat);
+        assertSourceRaster(RASTER_NAME_SUN_AZIMUTH, msgFormat);
+        assertSourceRaster(RASTER_NAME_VIEW_ZENITH, msgFormat);
+        assertSourceRaster(RASTER_NAME_VIEW_AZIMUTH, msgFormat);
+
+        if(useEcmwfAuxData){
+            String ecmwfMsg = "For ECMWF usage a '%s' raster is required";
+            assertSourceRaster(RASTER_NAME_SEA_LEVEL_PRESSURE, ecmwfMsg);
+            assertSourceRaster(RASTER_NAME_TOTAL_OZONE, ecmwfMsg);
+        }
 
 
         try {
@@ -1003,6 +1018,7 @@ public class C2rccMsiOperator extends PixelOperator implements C2rccConfigurable
         algorithm.setOutputOos(outputOos);
         algorithm.setOutputKd(outputKd);
         algorithm.setOutputUncertainties(outputUncertainties);
+        algorithm.setDeriveRwFromPathAndTransmittance(deriveRwFromPathAndTransmittance);
 
         timeCoding = sourceProduct.getSceneTimeCoding();
         if (timeCoding == null) {
@@ -1161,9 +1177,9 @@ public class C2rccMsiOperator extends PixelOperator implements C2rccConfigurable
         }
     }
 
-    private void assertSourceRaster(String name) {
+    private void assertSourceRaster(String name, String msgFormat) {
         if (!sourceProduct.containsRasterDataNode(name)) {
-            throw new OperatorException("Invalid source product, raster '" + name + "' required");
+            throw new OperatorException(String.format(msgFormat, name));
         }
     }
 

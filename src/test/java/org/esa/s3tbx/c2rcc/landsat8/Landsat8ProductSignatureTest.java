@@ -1,5 +1,6 @@
 package org.esa.s3tbx.c2rcc.landsat8;
 
+import org.esa.s3tbx.c2rcc.meris.C2rccMerisOperator;
 import org.esa.snap.core.datamodel.Band;
 import org.esa.snap.core.datamodel.CrsGeoCoding;
 import org.esa.snap.core.datamodel.FlagCoding;
@@ -144,6 +145,16 @@ public class Landsat8ProductSignatureTest {
         assertBands(targetProduct, EXPECTED_TUP_BANDS);
         assertBands(targetProduct, EXPECTED_OOS_RTOSA);
         assertBands(targetProduct, EXPECTED_OOS_RHOW);
+    }
+
+    @Test
+    public void testProductSignature_DeriveRwAlternative() throws FactoryException, TransformException {
+
+        C2rccLandsat8Operator operator = createDefaultOperator();
+        operator.setDeriveRwFromPathAndTransmittance(true);
+
+        Product targetProduct = operator.getTargetProduct();
+        assertDefaults(targetProduct, false);
     }
 
     @Test
