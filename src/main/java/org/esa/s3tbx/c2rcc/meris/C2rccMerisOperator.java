@@ -100,7 +100,7 @@ import static org.esa.s3tbx.c2rcc.meris.C2rccMerisAlgorithm.merband15_ix;
  */
 @OperatorMetadata(alias = "c2rcc.meris", version = "0.17",
         authors = "Roland Doerffer, Sabine Embacher, Norman Fomferra (Brockmann Consult)",
-        category = "Optical Processing/Thematic Water Processing",
+        category = "Optical/Thematic Water Processing",
         copyright = "Copyright (C) 2016 by Brockmann Consult",
         description = "Performs atmospheric correction and IOP retrieval with uncertainties on MERIS L1b data products.")
 public class C2rccMerisOperator extends PixelOperator implements C2rccConfigurable {
