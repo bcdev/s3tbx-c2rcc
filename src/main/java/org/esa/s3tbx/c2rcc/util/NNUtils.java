@@ -41,7 +41,7 @@ public class NNUtils {
             });
             int count = dotNetFilesCount[0];
             if (count != 1) {
-                throw new OperatorException("The path '" + nnDirPath + " must contain exact 1 file whith file ending '*.net' but contains " + count);
+                throw new OperatorException("The path '" + nnDirPath + " must contain exact 1 file with file ending '*.net', but contains " + count);
             }
         }
 
