@@ -117,6 +117,7 @@ public class C2rccMsiOperator extends PixelOperator implements C2rccConfigurable
 
     // MSI targets
     private static final int NN_SPECTRUM_COUNT = NN_SOURCE_BAND_REFL_NAMES.length;
+    private static final int NORM_NN_SPECTRUM_COUNT = NN_SPECTRUM_COUNT - 2;
     private static final int FULL_SPECTRUM_COUNT = SOURCE_BAND_REFL_NAMES.length;
     private static final int SINGLE_IX = FULL_SPECTRUM_COUNT + 7 * NN_SPECTRUM_COUNT;
 
@@ -657,7 +658,7 @@ public class C2rccMsiOperator extends PixelOperator implements C2rccConfigurable
         }
 
         if (outputRhown) {
-            for (int i = 0; i < NN_SPECTRUM_COUNT; i++) {
+            for (int i = 0; i < NORM_NN_SPECTRUM_COUNT; i++) {
                 tsc.defineSample(RHOWN_IX + i, "rhown_" + NN_SOURCE_BAND_REFL_NAMES[i]);
             }
         }
