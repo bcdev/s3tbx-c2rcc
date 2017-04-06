@@ -46,7 +46,7 @@ import static org.esa.s3tbx.c2rcc.viirs.C2rccViirsAlgorithm.viirsWavelengths;
  *
  * @author Marco Peters
  */
-@OperatorMetadata(alias = "c2rcc.viirs", version = "0.17",
+@OperatorMetadata(alias = "c2rcc.viirs", version = "0.18",
         authors = "Roland Doerffer, Marco Peters (Brockmann Consult)",
         category = "Optical/Thematic Water Processing",
         copyright = "Copyright (C) 2016 by Brockmann Consult",
