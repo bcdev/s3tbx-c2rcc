@@ -492,7 +492,8 @@ public class C2rccMeris4Operator extends PixelOperator implements C2rccConfigura
         final double[] solflux = new double[BAND_COUNT];
         for (int i = 0; i < BAND_COUNT; i++) {
             radiances[i] = sourceSamples[i].getDouble();
-            solflux[i] = sourceSamples[i + SOLAR_FLUX_START_IX].getDouble();
+            Sample solFluxSample = sourceSamples[i + SOLAR_FLUX_START_IX];
+            solflux[i] = solFluxSample.getNode().isPixelValid(x,y) ? solFluxSample.getDouble() : Double.NaN;
         }
 
         final PixelPos pixelPos = new PixelPos(x + 0.5f, y + 0.5f);
