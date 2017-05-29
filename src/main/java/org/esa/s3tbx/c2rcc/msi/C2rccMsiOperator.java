@@ -1,6 +1,5 @@
 package org.esa.s3tbx.c2rcc.msi;
 
-import com.bc.ceres.core.ProgressMonitor;
 import org.esa.s3tbx.c2rcc.C2rccConfigurable;
 import org.esa.s3tbx.c2rcc.ancillary.AtmosphericAuxdata;
 import org.esa.s3tbx.c2rcc.ancillary.AtmosphericAuxdataBuilder;
@@ -18,9 +17,6 @@ import org.esa.snap.core.datamodel.ProductNode;
 import org.esa.snap.core.datamodel.ProductNodeEvent;
 import org.esa.snap.core.datamodel.ProductNodeListener;
 import org.esa.snap.core.datamodel.ProductNodeListenerAdapter;
-import org.esa.snap.core.datamodel.RasterDataNode;
-import org.esa.snap.core.datamodel.Stx;
-import org.esa.snap.core.datamodel.StxFactory;
 import org.esa.snap.core.datamodel.TimeCoding;
 import org.esa.snap.core.dataop.dem.ElevationModel;
 import org.esa.snap.core.dataop.dem.ElevationModelDescriptor;
@@ -37,7 +33,6 @@ import org.esa.snap.core.gpf.pointop.Sample;
 import org.esa.snap.core.gpf.pointop.SourceSampleConfigurer;
 import org.esa.snap.core.gpf.pointop.TargetSampleConfigurer;
 import org.esa.snap.core.gpf.pointop.WritableSample;
-import org.esa.snap.core.image.ImageManager;
 import org.esa.snap.core.util.ProductUtils;
 import org.esa.snap.core.util.StringUtils;
 import org.esa.snap.core.util.converters.BooleanExpressionConverter;
@@ -368,16 +363,11 @@ public class C2rccMsiOperator extends PixelOperator implements C2rccConfigurable
     @Parameter(defaultValue = "true", label = "Output uncertainties")
     private boolean outputUncertainties;
 
-    // Workaround for angle dependent blocks in the resulting images
-    @Parameter(defaultValue = "true", label = "Use mean of view_azimuth_mean band")
-    private boolean useViewAzimuthMean;
-
     private C2rccMsiAlgorithm algorithm;
     private AtmosphericAuxdata atmosphericAuxdata;
     private ElevationModel elevationModel;
     private double[] solflux;
     private TimeCoding timeCoding;
-    private double viewAzimuthMean;
 
 
     @Override
@@ -540,15 +530,13 @@ public class C2rccMsiOperator extends PixelOperator implements C2rccConfigurable
             altitude = elevation;
         }
 
-//      Workaround for angle dependent blocks in the resulting images
-        double viewAzimuth = useViewAzimuthMean ? this.viewAzimuthMean : sourceSamples[VIEW_AZI_IX].getDouble();
         Result result = algorithm.processPixel(x, y, lat, lon,
                                                reflectances,
                                                solflux,
                                                sourceSamples[SUN_ZEN_IX].getDouble(),
                                                sourceSamples[SUN_AZI_IX].getDouble(),
                                                sourceSamples[VIEW_ZEN_IX].getDouble(),
-                                               viewAzimuth,
+                                               sourceSamples[VIEW_AZI_IX].getDouble(),
                                                altitude,
                                                sourceSamples[VALID_PIXEL_IX].getBoolean(),
                                                atmPress,
@@ -1031,11 +1019,6 @@ public class C2rccMsiOperator extends PixelOperator implements C2rccConfigurable
             assertSourceRaster(RASTER_NAME_TOTAL_OZONE, ecmwfMsg);
         }
 
-        // Workaround for angle dependent blocks in the resulting images
-        if (useViewAzimuthMean) {
-            viewAzimuthMean = getRasterAverage(sourceProduct.getRasterDataNode(RASTER_NAME_VIEW_AZIMUTH));
-        }
-
         try {
             if (StringUtils.isNotNullAndNotEmpty(alternativeNNPath)) {
                 String[] nnFilePaths = NNUtils.getNNFilePaths(Paths.get(alternativeNNPath), alternativeNetDirNames);
@@ -1081,13 +1064,6 @@ public class C2rccMsiOperator extends PixelOperator implements C2rccConfigurable
 
         }
         initAtmosphericAuxdata();
-    }
-
-    private double getRasterAverage(RasterDataNode rasterDataNode) {
-        int lvlCnt = rasterDataNode.getMultiLevelModel().getLevelCount();
-        int statLevel = ImageManager.getInstance().getStatisticsLevel(rasterDataNode, lvlCnt);
-        Stx stx = new StxFactory().withResolutionLevel(statLevel).create(rasterDataNode, ProgressMonitor.NULL);
-        return stx.getMean();
     }
 
     private ProductData.UTC getStartTime() {
