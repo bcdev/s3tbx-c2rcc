@@ -1,4 +1,10 @@
-# s3tbx-c2rcc
+# Note:
+The is an old abandoned repository of the C2RCC processor.
+For latests developments see https://github.com/senbox-org/s3tbx/tree/master/s3tbx-c2rcc
+If you have any questions please visit the forum: https://forum.step.esa.int/c/s3tbx/7
+
+
+## s3tbx-c2rcc
 This is the source distribution of the Case-2 Regional / Coast Colour (C2RCC) Atmospheric Correction (AC) and 
 Inherent Optical Properties (IOP) Processor for Sentinel-3 OLCI, Sentinel-2 MSI, Landsat-8, MERIS (incl. 4th repro), 
 MODIS and the SeaWiFS Level 1C radiance products.
